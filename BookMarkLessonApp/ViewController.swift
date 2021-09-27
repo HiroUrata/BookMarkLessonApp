@@ -11,6 +11,7 @@ class ViewController: UIViewController {
     
     let searchBar = UISearchBar()
     let tableView = UITableView()
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -40,7 +41,13 @@ class ViewController: UIViewController {
 
 extension ViewController:UISearchBarDelegate{
     
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        <#code#>
+    }
     
+    func searchBarBookmarkButtonClicked(_ searchBar: UISearchBar) {
+        <#code#>
+    }
 }
 
 
@@ -51,12 +58,23 @@ extension ViewController:UITableViewDelegate{
 
 extension ViewController:UITableViewDataSource{
     
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        
+        return tableView.frame.size.height / 10
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        <#code#>
+        
+        return 101
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        <#code#>
+        
+        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
+        
+        cell.textLabel?.text = String(indexPath.row)
+        
+        return cell
     }
     
     
