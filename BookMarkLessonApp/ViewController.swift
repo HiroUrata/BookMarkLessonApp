@@ -11,6 +11,7 @@ class ViewController: UIViewController {
     
     let searchBar = UISearchBar()
     let tableView = UITableView()
+    let bookMarkListView = UITableView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -33,6 +34,7 @@ class ViewController: UIViewController {
         
         tableView.frame = CGRect(x: view.frame.minX, y: searchBar.frame.origin.y + searchBar.frame.size.height, width: view.frame.width, height: view.frame.size.height - (searchBar.frame.origin.y + searchBar.frame.size.height))
         
+        bookMarkListView.frame = CGRect(x: view.frame.minX - (view.frame.size.width / 2), y: tableView.frame.origin.y, width: tableView.frame.size.width / 2, height: tableView.frame.height)
     }
     
 
