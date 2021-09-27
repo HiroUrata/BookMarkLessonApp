@@ -11,7 +11,6 @@ class ViewController: UIViewController {
     
     let searchBar = UISearchBar()
     let tableView = UITableView()
-
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -41,13 +40,13 @@ class ViewController: UIViewController {
 
 extension ViewController:UISearchBarDelegate{
     
-    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        <#code#>
-    }
-    
-    func searchBarBookmarkButtonClicked(_ searchBar: UISearchBar) {
-        <#code#>
-    }
+//    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+//        <#code#>
+//    }
+//
+//    func searchBarBookmarkButtonClicked(_ searchBar: UISearchBar) {
+//        <#code#>
+//    }
 }
 
 
@@ -73,10 +72,20 @@ extension ViewController:UITableViewDataSource{
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
         
         cell.textLabel?.text = String(indexPath.row)
+        cell.accessoryView = {() -> UISwitch in
+            
+            let uiSwitch = UISwitch()
+            uiSwitch.frame.origin = CGPoint(x: cell.frame.maxX - (uiSwitch.frame.width + 5), y: cell.frame.midY - (uiSwitch.frame.size.height / 2))
+            uiSwitch.addTarget(self, action: #selector(bookMarkRegistration), for: .valueChanged)
+            return uiSwitch
+        }()
         
         return cell
     }
     
-    
+    @objc func bookMarkRegistration(sender:UISwitch){
+        
+        
+    }
     
 }
