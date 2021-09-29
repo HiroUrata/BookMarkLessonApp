@@ -13,6 +13,8 @@ class ViewController: UIViewController {
     let tableView = UITableView()
     let bookMarkListView = UITableView()
     
+    var bookMarkContentsArray = [String]()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
        
@@ -23,8 +25,15 @@ class ViewController: UIViewController {
         
         tableView.delegate = self
         tableView.dataSource = self
+        tableView.tag = 1
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "Cell")
         view.addSubview(tableView)
+        
+        bookMarkListView.delegate = self
+        bookMarkListView.dataSource = self
+        bookMarkListView.tag = 2
+        bookMarkListView.register(UITableViewCell.self, forCellReuseIdentifier: "BookMarkCell")
+        view.addSubview(bookMarkListView)
         
     }
 
@@ -71,23 +80,46 @@ extension ViewController:UITableViewDataSource{
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
+        switch tableView.tag {
         
-        cell.textLabel?.text = String(indexPath.row)
-        cell.accessoryView = {() -> UISwitch in
+        case 1:
+            let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
             
-            let uiSwitch = UISwitch()
-            uiSwitch.frame.origin = CGPoint(x: cell.frame.maxX - (uiSwitch.frame.width + 5), y: cell.frame.midY - (uiSwitch.frame.size.height / 2))
-            uiSwitch.addTarget(self, action: #selector(bookMarkRegistration), for: .valueChanged)
-            return uiSwitch
-        }()
+            cell.textLabel?.text = String(indexPath.row)
+            cell.accessoryView = {() -> UISwitch in
+                
+                let uiSwitch = UISwitch()
+                uiSwitch.frame.origin = CGPoint(x: cell.frame.maxX - (uiSwitch.frame.width + 5), y: cell.frame.midY - (uiSwitch.frame.size.height / 2))
+                uiSwitch.addTarget(self, action: #selector(bookMarkRegistration), for: .valueChanged)
+                uiSwitch.tag = indexPath.row
+                return uiSwitch
+            }()
+            return cell
         
-        return cell
+        case 2:
+            let cell = tableView.dequeueReusableCell(withIdentifier: "BookMarkCell", for: indexPath)
+            
+            cell.textLabel?.text = bookMarkContentsArray[indexPath.row]
+            
+            return cell
+        default:
+            break
+        }
+        
+        
     }
     
     @objc func bookMarkRegistration(sender:UISwitch){
         
+        switch sender.isOn{
         
+        case true:
+            bookMarkContentsArray.append(String(sender.tag))
+            
+        case false:
+            bookMarkContentsArray.removeAll(where: {$0 == String(sender.tag)})
+            bookMarkListView.reloadData()
+        }
     }
     
 }
