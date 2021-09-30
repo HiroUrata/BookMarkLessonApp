@@ -80,32 +80,37 @@ extension ViewController:UITableViewDataSource{
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        switch tableView.tag {
-        
-        case 1:
-            let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
+        return {() -> UITableViewCell in
             
-            cell.textLabel?.text = String(indexPath.row)
-            cell.accessoryView = {() -> UISwitch in
+            var retunCell = UITableViewCell()
+            
+            switch tableView.tag {
+            
+            case 1:
+                let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
                 
-                let uiSwitch = UISwitch()
-                uiSwitch.frame.origin = CGPoint(x: cell.frame.maxX - (uiSwitch.frame.width + 5), y: cell.frame.midY - (uiSwitch.frame.size.height / 2))
-                uiSwitch.addTarget(self, action: #selector(bookMarkRegistration), for: .valueChanged)
-                uiSwitch.tag = indexPath.row
-                return uiSwitch
-            }()
-            return cell
-        
-        case 2:
-            let cell = tableView.dequeueReusableCell(withIdentifier: "BookMarkCell", for: indexPath)
-            
-            cell.textLabel?.text = bookMarkContentsArray[indexPath.row]
-            
-            return cell
-        default:
-            break
-        }
-        
+                cell.textLabel?.text = String(indexPath.row)
+                cell.accessoryView = {() -> UISwitch in
+                    
+                    let uiSwitch = UISwitch()
+                    uiSwitch.frame.origin = CGPoint(x: cell.frame.maxX - (uiSwitch.frame.width + 5), y: cell.frame.midY - (uiSwitch.frame.size.height / 2))
+                    uiSwitch.addTarget(self, action: #selector(bookMarkRegistration), for: .valueChanged)
+                    uiSwitch.tag = indexPath.row
+                    return uiSwitch
+                }()
+                retunCell = cell
+                
+            case 2:
+                let cell = tableView.dequeueReusableCell(withIdentifier: "BookMarkCell", for: indexPath)
+                
+                cell.textLabel?.text = bookMarkContentsArray[indexPath.row]
+                retunCell = cell
+                
+            default:
+                break
+            }
+            return retunCell
+        }()
         
     }
     
