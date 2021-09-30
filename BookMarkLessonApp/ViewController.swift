@@ -31,6 +31,7 @@ class ViewController: UIViewController {
         
         bookMarkListView.delegate = self
         bookMarkListView.dataSource = self
+        bookMarkListView.backgroundColor = .systemGray
         bookMarkListView.tag = 2
         bookMarkListView.register(UITableViewCell.self, forCellReuseIdentifier: "BookMarkCell")
         view.addSubview(bookMarkListView)
@@ -55,9 +56,17 @@ extension ViewController:UISearchBarDelegate{
 //        <#code#>
 //    }
 //
-//    func searchBarBookmarkButtonClicked(_ searchBar: UISearchBar) {
-//        <#code#>
-//    }
+    func searchBarBookmarkButtonClicked(_ searchBar: UISearchBar) {
+        
+        if bookMarkListView.frame.origin.x == view.frame.minX - (view.frame.size.width / 2){
+            
+        UITableView.animate(withDuration: 0.6, delay: 0, options: .curveEaseInOut, animations: {self.bookMarkListView.frame.origin.x = self.view.frame.minX}, completion: nil)
+            
+        }else if bookMarkListView.frame.origin.x == view.frame.minX{
+            
+            UITableView.animate(withDuration: 0.6, delay: 0, options: .curveEaseInOut, animations: {self.bookMarkListView.frame.origin.x = self.view.frame.minX - (self.view.frame.size.width / 2)}, completion: nil)
+        }
+    }
 }
 
 
@@ -103,7 +112,13 @@ extension ViewController:UITableViewDataSource{
             case 2:
                 let cell = tableView.dequeueReusableCell(withIdentifier: "BookMarkCell", for: indexPath)
                 
-                cell.textLabel?.text = bookMarkContentsArray[indexPath.row]
+                if bookMarkContentsArray.count > 0{
+                    
+                    cell.textLabel?.text = bookMarkContentsArray[indexPath.row]
+                }
+                //cell.textLabel?.text = bookMarkContentsArray[indexPath.row]
+                cell.textLabel?.textColor = .white
+                cell.backgroundColor = .systemGray
                 retunCell = cell
                 
             default:
