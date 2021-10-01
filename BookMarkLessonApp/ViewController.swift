@@ -13,7 +13,7 @@ class ViewController: UIViewController {
     let tableView = UITableView()
     let bookMarkListView = UITableView()
     
-    var bookMarkContentsArray = [String]()
+    var bookMarkContentsArray:[String] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -112,9 +112,13 @@ extension ViewController:UITableViewDataSource{
             case 2:
                 let cell = tableView.dequeueReusableCell(withIdentifier: "BookMarkCell", for: indexPath)
                 
-                if bookMarkContentsArray.count > 0{
+                if bookMarkContentsArray.count >= 1{
                     
-                    cell.textLabel?.text = bookMarkContentsArray[indexPath.row]
+                    for count in 0...bookMarkContentsArray.count - 1{
+                        
+                        cell.textLabel?.text = bookMarkContentsArray[count]
+                    }
+                    
                 }
                 //cell.textLabel?.text = bookMarkContentsArray[indexPath.row]
                 cell.textLabel?.textColor = .white
@@ -135,6 +139,13 @@ extension ViewController:UITableViewDataSource{
         
         case true:
             bookMarkContentsArray.append(String(sender.tag))
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                self.bookMarkListView.reloadData()
+                print(self.bookMarkContentsArray)
+            }
+//            bookMarkListView.reloadData()
+//            print(bookMarkContentsArray)
             
         case false:
             bookMarkContentsArray.removeAll(where: {$0 == String(sender.tag)})
