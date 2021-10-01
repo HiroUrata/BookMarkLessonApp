@@ -84,7 +84,18 @@ extension ViewController:UITableViewDataSource{
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        return 101
+        var returnInt = Int()
+        
+        switch tableView.tag{
+        
+        case 1: returnInt = 101
+            
+        case 2: returnInt = bookMarkContentsArray.count
+            
+        default: returnInt = 0
+        }
+        
+        return returnInt
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -113,12 +124,8 @@ extension ViewController:UITableViewDataSource{
                 let cell = tableView.dequeueReusableCell(withIdentifier: "BookMarkCell", for: indexPath)
                 
                 if bookMarkContentsArray.count >= 1{
-                    
-                    for count in 0...bookMarkContentsArray.count - 1{
                         
-                        cell.textLabel?.text = bookMarkContentsArray[count]
-                    }
-                    
+                    cell.textLabel?.text = bookMarkContentsArray[indexPath.row]
                 }
                 //cell.textLabel?.text = bookMarkContentsArray[indexPath.row]
                 cell.textLabel?.textColor = .white
