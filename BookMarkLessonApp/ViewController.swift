@@ -13,7 +13,9 @@ class ViewController: UIViewController {
     let tableView = UITableView()
     let bookMarkListView = UITableView()
     
+    var tableViewContentsArray = [Int](0...100)
     var bookMarkContentsArray:[String] = []
+    var textDidChangeResultArray:[Int] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -52,10 +54,30 @@ class ViewController: UIViewController {
 
 extension ViewController:UISearchBarDelegate{
     
-//    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-//        <#code#>
-//    }
-//
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        
+        textDidChangeResultArray = []
+        textDidChangeResultArray = tableViewContentsArray.filter{ content in
+            
+            if String(content).contains(searchBar.text!) == true{
+                
+                return true
+            }else{
+                
+                return false
+            }
+        }
+        
+    }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        
+        searchBar.text = ""
+        textDidChangeResultArray = []
+        tableView.reloadData()
+        
+    }
+
     func searchBarBookmarkButtonClicked(_ searchBar: UISearchBar) {
         
         if bookMarkListView.frame.origin.x == view.frame.minX - (view.frame.size.width / 2){
@@ -72,7 +94,19 @@ extension ViewController:UISearchBarDelegate{
 
 extension ViewController:UITableViewDelegate{
     
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
     
+        switch tableView.tag{
+        
+        case 1: return
+            
+        case 2:
+            let selectCell = tableView.cellForRow(at: indexPath)
+            searchBar.text = selectCell?.textLabel?.text
+            
+        default: break
+        }
+    }
 }
 
 extension ViewController:UITableViewDataSource{
@@ -88,11 +122,23 @@ extension ViewController:UITableViewDataSource{
         
         switch tableView.tag{
         
-        case 1: returnInt = 101
+        case 1:
+            returnInt = {() -> Int in
+                
+            if textDidChangeResultArray.count > 0{
+                
+                return textDidChangeResultArray.count
+            }else{
+                
+                return tableViewContentsArray.count
+            }
+        }()
             
-        case 2: returnInt = bookMarkContentsArray.count
+        case 2:
+            returnInt = bookMarkContentsArray.count
             
-        default: returnInt = 0
+        default:
+            returnInt = 0
         }
         
         return returnInt
@@ -109,7 +155,7 @@ extension ViewController:UITableViewDataSource{
             case 1:
                 let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
                 
-                cell.textLabel?.text = String(indexPath.row)
+                cell.textLabel?.text = String(tableViewContentsArray[indexPath.row])
                 cell.accessoryView = {() -> UISwitch in
                     
                     let uiSwitch = UISwitch()
@@ -145,7 +191,7 @@ extension ViewController:UITableViewDataSource{
         switch sender.isOn{
         
         case true:
-            bookMarkContentsArray.append(String(sender.tag))
+            bookMarkContentsArray.append(String(tableViewContentsArray[sender.tag]))
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 self.bookMarkListView.reloadData()
