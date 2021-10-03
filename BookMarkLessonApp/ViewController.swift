@@ -17,12 +17,15 @@ class ViewController: UIViewController {
     var bookMarkContentsArray:[String] = []
     var textDidChangeResultArray:[Int] = []
     
+    var searchBool = Bool()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-       
+        
         searchBar.delegate = self
         searchBar.showsBookmarkButton = true
         searchBar.showsCancelButton = true
+        searchBar.keyboardType = .numberPad
         view.addSubview(searchBar)
         
         tableView.delegate = self
@@ -56,24 +59,28 @@ extension ViewController:UISearchBarDelegate{
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         
-        textDidChangeResultArray = []
-        textDidChangeResultArray = tableViewContentsArray.filter{ content in
-            
-            if String(content).contains(searchBar.text!) == true{
+            textDidChangeResultArray = []
+            textDidChangeResultArray = tableViewContentsArray.filter{ content in
                 
-                return true
-            }else{
-                
-                return false
+                if String(content).contains(searchBar.text!) == true{
+                    
+                    return true
+                }else{
+                    
+                    return false
+                }
             }
-        }
-        
+            
+            print(textDidChangeResultArray)
+            searchBool = true
+            tableView.reloadData()
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         
         searchBar.text = ""
         textDidChangeResultArray = []
+        searchBool = false
         tableView.reloadData()
         
     }
@@ -103,6 +110,21 @@ extension ViewController:UITableViewDelegate{
         case 2:
             let selectCell = tableView.cellForRow(at: indexPath)
             searchBar.text = selectCell?.textLabel?.text
+            textDidChangeResultArray = []
+            textDidChangeResultArray = tableViewContentsArray.filter{ content in
+                
+                if String(content).contains(searchBar.text!) == true{
+                    
+                    return true
+                }else{
+                    
+                    return false
+                }
+            }
+            
+            print(textDidChangeResultArray)
+            searchBool = true
+            self.tableView.reloadData()
             
         default: break
         }
@@ -155,13 +177,47 @@ extension ViewController:UITableViewDataSource{
             case 1:
                 let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
                 
-                cell.textLabel?.text = String(tableViewContentsArray[indexPath.row])
+                cell.textLabel?.text = {() -> String in
+                    
+                    if textDidChangeResultArray.count > 0{
+                        
+                        return String(textDidChangeResultArray[indexPath.row])
+                    }else{
+                        
+                        return String(tableViewContentsArray[indexPath.row])
+                    }
+                }()
                 cell.accessoryView = {() -> UISwitch in
                     
                     let uiSwitch = UISwitch()
                     uiSwitch.frame.origin = CGPoint(x: cell.frame.maxX - (uiSwitch.frame.width + 5), y: cell.frame.midY - (uiSwitch.frame.size.height / 2))
                     uiSwitch.addTarget(self, action: #selector(bookMarkRegistration), for: .valueChanged)
                     uiSwitch.tag = indexPath.row
+                    uiSwitch.isOn = {() -> Bool in
+                        
+                        switch searchBool{
+                        
+                        case true:
+                            if bookMarkContentsArray.contains(String(textDidChangeResultArray[indexPath.row])){
+
+                                return true
+                            }else{
+
+                                return false
+                            }
+                            
+                        case false:
+                            if bookMarkContentsArray.contains(String(tableViewContentsArray[indexPath.row])){
+
+                                return true
+                            }else{
+
+                                return false
+                            }
+                        }
+
+                    }()
+                    
                     return uiSwitch
                 }()
                 retunCell = cell
@@ -191,18 +247,28 @@ extension ViewController:UITableViewDataSource{
         switch sender.isOn{
         
         case true:
-            bookMarkContentsArray.append(String(tableViewContentsArray[sender.tag]))
-            
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            if searchBool == true{
+                
+                bookMarkContentsArray.append(String(textDidChangeResultArray[sender.tag]))
                 self.bookMarkListView.reloadData()
-                print(self.bookMarkContentsArray)
+            }else if searchBool == false{
+                
+                bookMarkContentsArray.append(String(tableViewContentsArray[sender.tag]))
+                self.bookMarkListView.reloadData()
             }
-//            bookMarkListView.reloadData()
-//            print(bookMarkContentsArray)
-            
+           
         case false:
-            bookMarkContentsArray.removeAll(where: {$0 == String(sender.tag)})
-            bookMarkListView.reloadData()
+            if searchBool == true{
+                
+                bookMarkContentsArray.removeAll(where: {$0 == String(textDidChangeResultArray[sender.tag])})
+                bookMarkListView.reloadData()
+            }else if searchBool == false{
+                
+                bookMarkContentsArray.removeAll(where: {$0 == String(tableViewContentsArray[sender.tag])})
+                bookMarkListView.reloadData()
+            }
+//            bookMarkContentsArray.removeAll(where: {$0 == String(sender.tag)})
+//            bookMarkListView.reloadData()
         }
     }
     
